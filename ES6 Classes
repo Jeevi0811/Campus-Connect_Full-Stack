@@ -1,0 +1,11 @@
+class Student {
+constructor(name, marks) {
+this.name = name;
+this.marks = marks;
+}
+getGrade() {
+return this.marks >= 80 ? "A" : "B";
+}
+}
+const s1 = new Student("Divya", 88);
+console.log(`${s1.name} scored grade ${s1.getGrade()}`);
