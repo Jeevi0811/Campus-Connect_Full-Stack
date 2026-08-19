@@ -1,0 +1,54 @@
+import	{	useState	}	from	"react";
+import	"./DynamicForm.css";
+function	DynamicForm()	{
+		const	[name,	setName]	=	useState("");
+		const	[skills,	setSkills]	=	useState([""]);
+		const	[submittedData,	setSubmittedData]	=	useState(null);
+		const	handleSkillChange	=	(index,	value)	=>	{
+				const	updated	=	[...skills];
+				updated[index]	=	value;
+				setSkills(updated);
+		};
+		const	addSkillField	=	()	=>	{
+				setSkills([...skills,	""]);
+		};
+		const	removeSkillField	=	(index)	=>	{
+				const	updated	=	skills.filter((_,	i)	=>	i	!==	index);
+				setSkills(updated.length	?	updated	:	[""]);
+		};
+		const	handleSubmit	=	(e)	=>	{
+				e.preventDefault();
+				const	cleanSkills	=	skills.map(s	=>	s.trim()).filter(s	=>	s	!==	"");
+				setSubmittedData({	name,	skills:	cleanSkills	});
+		};
+		return	(
+				<div	className="dynamic-form-box">
+						<h2>Student	Skill	Form</h2>
+						<form	onSubmit={handleSubmit}>
+								<label>Name</label>
+								<input	value={name}	onChange={(e)	=>	setName(e.target.value)}	/>
+								<label>Skills</label>
+								{skills.map((skill,	index)	=>	(
+										<div	className="skill-row"	key={index}>
+												<input
+														value={skill}
+														placeholder={`Skill	${index	+	1}`}
+														onChange={(e)	=>	handleSkillChange(index,	e.target.value)}
+												/>
+												<button	type="button"	className="remove-btn"	onClick={()	=>	removeSkillField(index)}>✕</button>
+										</div>
+								))}
+								<button	type="button"	className="add-btn"	onClick={addSkillField}>+	Add	Skill</button>
+								<button	type="submit"	className="submit-btn">Submit</button>
+						</form>
+						{submittedData	&&	(
+								<div	className="result-box">
+										<h3>Submitted	Data</h3>
+										<p><strong>Name:</strong>	{submittedData.name}</p>
+										<p><strong>Skills:</strong>	{submittedData.skills.join(",	")}</p>
+								</div>
+						)}
+				</div>
+		);
+}
+export	default	DynamicForm;
