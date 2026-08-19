@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Weather App</title>
+<style>
+body {
+  font-family: Arial, sans-serif; background: #e8f0fe; margin: 0;
+  display: flex; justify-content: center; align-items: center; height: 100vh;
+}
+.weather-box {
+  background: #fff; padding: 30px; border-radius: 12px; width: 320px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15); text-align: center;
+}
+input {
+  width: 80%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 10px;
+}
+button {
+  background: #2c3e6b; color: #fff; border: none; padding: 8px 16px;
+  border-radius: 4px; cursor: pointer;
+}
+#result { margin-top: 15px; color: #16324f; }
+#result h2 { margin: 5px 0; font-size: 28px; }
+.error { color: red; }
+</style>
+</head>
+<body>
+<div class="weather-box">
+  <h2>Weather App</h2>
+  <input type="text" id="cityInput" placeholder="Enter city name" />
+  <br />
+  <button onclick="getWeather()">Get Weather</button>
+  <div id="result"></div>
+</div>
+<script>
+async function getWeather() {
+  const city = document.getElementById("cityInput").value.trim();
+  const result = document.getElementById("result");
+  if (!city) {
+    result.innerHTML = `<p class="error">Please enter a city name.</p>`;
+    return;
+  }
+  result.innerHTML = `<p>Loading...</p>`;
+  try {
+    // Step 1: Convert city name to coordinates (Geocoding API)
+    const geoRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`
+    );
+    const geoData = await geoRes.json();
+    if (!geoData.results || geoData.results.length === 0) {
+      result.innerHTML = `<p class="error">City not found. Try again.</p>`;
+      return;
+    }
+    const { latitude, longitude, name, country } = geoData.results[0];
+ 
+    // Step 2: Fetch current weather for those coordinates
+    const weatherRes = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}` +
+      `&current=temperature_2m,relative_humidity_2m,weather_code`
+    );
+    const weatherData = await weatherRes.json();
+    const current = weatherData.current;
+ 
+    result.innerHTML = `
+      <h3>${name}, ${country}</h3>
+      <h2>${current.temperature_2m} &deg;C</h2>
+      <p>Humidity: ${current.relative_humidity_2m}%</p>
+      <p>Condition Code: ${current.weather_code}</p>
+    `;
+  } catch (error) {
+    result.innerHTML = `<p class="error">Something went wrong: ${error.message}</p>`;
+  }
+}
+</script>
+</body>
+</html>
