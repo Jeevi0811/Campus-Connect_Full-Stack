@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Array Operations - ES6</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background: #f4f6f9;
+    color: #16324f;
+  }
+  h1 { color: #2c3e6b; }
+  h2 { color: #2c3e6b; margin-top: 30px; border-bottom: 2px solid #dbe2ef; padding-bottom: 4px;
+ }
+  button {
+    background: #2c3e6b; color: #fff; border: none; padding: 8px 16px;
+    border-radius: 4px; cursor: pointer; margin-bottom: 15px; font-size: 14px;
+  }
+  button:hover { background: #1c2b4a; }
+  table {
+    border-collapse: collapse; width: 100%; margin: 10px 0 20px 0;
+    background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; font-size: 14px; }
+  th { background: #2c3e6b; color: #fff; }
+  tr:nth-child(even) { background: #f9fafc; }
+  .pass { color: #1a7f37; font-weight: bold; }
+  .fail { color: #c0392b; font-weight: bold; }
+  .summary-box {
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: inline-block; margin-right: 15px;
+  }
+  ul { background: #fff; padding: 15px 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0
+,0,0.1); }
+  code { background: #eef1f7; padding: 2px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+ 
+<h1>Array Operations - ES6 Array Methods</h1>
+<p>Demonstrates map(), filter(), reduce(), find(), sort(), and forEach()
+   on an array of student objects.</p>
+<button onclick="runArrayOperations()">Run Array Operations</button>
+ 
+<div id="output"></div>
+ 
+<script>
+const students = [
+  { id: 1, name: "Ananya", marks: 88 },
+  { id: 2, name: "Rahul", marks: 45 },
+  { id: 3, name: "Priya", marks: 92 },
+  { id: 4, name: "Karan", marks: 67 },
+  { id: 5, name: "Divya", marks: 38 }
+];
+ 
+function runArrayOperations() {
+  const out = document.getElementById("output");
+  out.innerHTML = ""; // clear previous run
+ 
+  // 1. map() - transform each element (add a "grade" field)
+  const withGrades = students.map(student => ({
+    ...student,
+    grade: student.marks >= 50 ? "Pass" : "Fail"
+  }));
+ 
+  // 2. filter() - get only students who passed
+  const passedStudents = students.filter(student => student.marks >= 50);
+ 
+  // 3. reduce() - calculate total and average marks
+  const totalMarks = students.reduce((sum, student) => sum + student.marks, 0);
+  const averageMarks = (totalMarks / students.length).toFixed(2);
+ 
+  // 4. find() - find the topper (first with marks > 90)
+  const topper = students.find(student => student.marks > 90);
+ 
+  // 5. sort() - rank students by marks (descending), without mutating original
+  const ranked = [...students].sort((a, b) => b.marks - a.marks);
+ 
+  // 6. forEach() - simple iteration (names list)
+  let namesList = "";
+  students.forEach(s => { namesList += `<li>${s.name}</li>`; });
+ 
+  // Also log everything to console, same as the original script
+  console.log("1) map() -> withGrades:", withGrades);
+  console.log("2) filter() -> passedStudents:", passedStudents);
+  console.log("3) reduce() -> totalMarks:", totalMarks, "| average:", averageMarks);
+  console.log("4) find() -> topper:", topper);
+  console.log("5) sort() -> ranked list:", ranked);
+  console.log("6) forEach() -> all student names:");
+  students.forEach(s => console.log("-", s.name));
+ 
+  // Build on-page output
+  out.innerHTML = `
+    <h2>1) map() -> withGrades</h2>
+    <table>
+      <tr><th>ID</th><th>Name</th><th>Marks</th><th>Grade</th></tr>
+      ${withGrades.map(s => `
+        <tr>
+          <td>${s.id}</td><td>${s.name}</td><td>${s.marks}</td>
+          <td class="${s.grade === 'Pass' ? 'pass' : 'fail'}">${s.grade}</td>
+        </tr>`).join("")}
+    </table>
+ 
+    <h2>2) filter() -> passedStudents (marks &gt;= 50)</h2>
+    <table>
+      <tr><th>ID</th><th>Name</th><th>Marks</th></tr>
+      ${passedStudents.map(s => `<tr><td>${s.id}</td><td>${s.name}</td><td>${s.marks}</td></tr>
+`).join("")}
+    </table>
+ 
+    <h2>3) reduce() -> totals</h2>
+    <div class="summary-box"><strong>Total Marks:</strong> ${totalMarks}</div>
+    <div class="summary-box"><strong>Average Marks:</strong> ${averageMarks}</div>
+ 
+    <h2>4) find() -> topper (first with marks &gt; 90)</h2>
+    <div class="summary-box"><strong>${topper.name}</strong> - ${topper.marks} marks (ID: ${top
+per.id})
+</div>
+ 
+    <h2>5) sort() -> ranked list (descending, original array untouched)</h2>
+    <table>
+      <tr><th>Rank</th><th>Name</th><th>Marks</th></tr>
+      ${ranked.map((s, i) => `<tr><td>${i + 1}</td><td>${s.name}</td><td>${s.marks}</td></tr>`)
+.join("")}
+    </table>
+ 
+    <h2>6) forEach() -> all student names</h2>
+    <ul>${namesList}</ul>
+  `;
+}
+</script>
+</body>
+</html>
